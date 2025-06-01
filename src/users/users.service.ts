@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class UsersService {
@@ -43,11 +43,11 @@ export class UsersService {
   }
 
   findOne(id: number) {
-    try {
-      return this.users.find((user) => user.id === id);
-    } catch (error) {
-      throw error;
+    const user = this.users.find((user) => user.id === id);
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
+    return user;
   }
 
   create(user: { name: string; email: string; role: string }) {
@@ -72,7 +72,6 @@ export class UsersService {
       return user;
     });
 
-    // return this.findOne(id);
     return this.users;
   }
 
